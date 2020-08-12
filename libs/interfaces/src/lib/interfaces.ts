@@ -1,10 +1,10 @@
-export interface Pacient {
+export interface Patient {
   name: string;
   birthday: Date;
   email: string;
   phone: string;
   photo: string;
-  appointment: Array<Appointment>
+  appointment: Array<Appointment>;
 }
 
 /**
@@ -14,7 +14,7 @@ export interface Pacient {
 export interface Appointment {
   complaints: string;
   appointmentTime: number;
-  procedures: Array<Procedure>
+  procedures: Array<Procedure>;
   totalTime: number;
   totalCost: number;
 }
