@@ -13,15 +13,18 @@ export interface Patient {
  */
 
 export interface Appointment {
+  id: string;
   complaints: string;
   appointmentTime: number;
   procedures: Array<Procedure>;
   totalTime: number;
   totalCost: number;
+  patient: Patient;
 }
 
 export interface Procedure {
+  id: string;
   name: string;
-  cost: string;
+  cost: number;
   time: number;
 }

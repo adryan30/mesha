@@ -3,7 +3,6 @@ import { Card, Space, Table } from 'antd';
 import { Link } from 'react-router-dom';
 import { Patient } from '@mesha/interfaces';
 import Avatar from 'antd/lib/avatar/avatar';
-import Title from 'antd/lib/skeleton/Title';
 
 const Patients: React.FC = () => {
   const [data, setData] = useState<Array<Patient>>([
