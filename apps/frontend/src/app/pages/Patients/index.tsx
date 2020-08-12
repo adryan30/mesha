@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Card, Space, Table } from 'antd';
 import { Link } from 'react-router-dom';
 import { Patient } from '@mesha/interfaces';
+import Avatar from 'antd/lib/avatar/avatar';
+import Title from 'antd/lib/skeleton/Title';
 
 const Patients: React.FC = () => {
   const [data, setData] = useState<Array<Patient>>([
@@ -37,11 +39,7 @@ const Patients: React.FC = () => {
       dataIndex: 'photo',
       key: 'photo',
       render: (photo: string, record: Patient) => (
-        <img
-          src={photo}
-          alt={`Avatar de ${record.name}`}
-          style={{ height: 75, borderRadius: 45, border: '2px solid black' }}
-        />
+        <Avatar src={photo} alt={`Avatar de ${record.name}`} size={75} />
       ),
     },
     {
