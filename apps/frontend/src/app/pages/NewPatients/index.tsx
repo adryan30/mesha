@@ -51,7 +51,6 @@ const NewPatients: React.FC = () => {
         <Form
           {...layout}
           name="newPatient"
-          initialValues={{ remember: true }}
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
         >

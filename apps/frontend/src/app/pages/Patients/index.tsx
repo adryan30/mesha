@@ -70,7 +70,7 @@ const Patients: React.FC = () => {
       key: 'action',
       render: (_: string, record: Patient) => (
         <Space size="middle">
-          <Link to={`/appointment/${record.id}`}>Novo atendimento</Link>
+          <Link to={`/appointments/new/${record.id}`}>Novo atendimento</Link>
         </Space>
       ),
     },

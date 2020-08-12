@@ -13,7 +13,7 @@ export interface Patient {
  */
 
 export interface Appointment {
-  id: string;
+  id?: string;
   complaints: string;
   appointmentTime: number;
   procedures: Array<Procedure>;
@@ -23,7 +23,7 @@ export interface Appointment {
 }
 
 export interface Procedure {
-  id: string;
+  id?: string;
   name: string;
   cost: number;
   time: number;

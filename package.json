@@ -34,8 +34,10 @@
     "document-register-element": "1.13.1",
     "moment": "^2.27.0",
     "react": "16.13.1",
+    "react-compound-timer": "^1.2.0",
     "react-dom": "16.13.1",
     "react-router-dom": "5.2.0",
+    "react-stopwatch": "^2.0.4",
     "reflect-metadata": "^0.1.13",
     "rxjs": "~6.5.5"
   },
