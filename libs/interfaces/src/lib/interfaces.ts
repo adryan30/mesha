@@ -20,6 +20,7 @@ export interface Appointment {
 }
 
 export interface Procedure {
+  name: string;
   cost: string;
   time: number;
 }
