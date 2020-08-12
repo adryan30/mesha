@@ -1,10 +1,11 @@
 export interface Patient {
+  id: string;
   name: string;
   birthday: Date;
   email: string;
   phone: string;
   photo: string;
-  appointment: Array<Appointment>;
+  appointment?: Array<Appointment>;
 }
 
 /**
