@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param } from '@nestjs/common';
 import { Appointment } from '@mesha/interfaces';
 import { AppointmentService } from './appointment.service';
 
@@ -14,5 +14,10 @@ export class AppointmentController {
   @Get()
   getAllAppointments() {
     return this.appointmentService.getAllAppointments();
+  }
+
+  @Get(':id')
+  getOneAppointment(@Param('id') id: string) {
+    return this.appointmentService.getOneAppointment(id);
   }
 }

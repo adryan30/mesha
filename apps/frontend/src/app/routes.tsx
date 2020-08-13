@@ -6,6 +6,7 @@ import Patients from './pages/Patients';
 import Appointments from './pages/Appointments';
 import NewPatients from './pages/NewPatients';
 import NewAppointments from './pages/NewAppointments';
+import PrintPage from './pages/PrintPage';
 
 const Routes: React.FC = () => {
   return (
@@ -14,7 +15,8 @@ const Routes: React.FC = () => {
       <Route path="/patients" component={Patients} exact />
       <Route path="/patients/new" component={NewPatients} />
       <Route path="/appointments" component={Appointments} exact />
-      <Route path="/appointments/new/:id" component={NewAppointments} exact />
+      <Route path="/appointments/print/:id" component={PrintPage} />
+      <Route path="/appointments/new/:id" component={NewAppointments} />
     </>
   );
 };

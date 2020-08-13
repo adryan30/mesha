@@ -17,9 +17,17 @@ export class AppointmentService {
     });
   }
 
-  async getAllAppointments() {
+  getAllAppointments() {
     return this.db.transaction((entityManager) => {
       return entityManager.find(Appointment, {
+        relations: ['patient', 'procedures'],
+      });
+    });
+  }
+
+  getOneAppointment(id: string) {
+    return this.db.transaction((entityManager) => {
+      return entityManager.findOne(Appointment, id, {
         relations: ['patient', 'procedures'],
       });
     });

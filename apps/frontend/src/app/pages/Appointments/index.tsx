@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Appointment, Patient } from '@mesha/interfaces';
-import { useHistory } from 'react-router-dom';
+import { useHistory, Link } from 'react-router-dom';
 import { Space, Card, Table, Button, Modal, Select, message } from 'antd';
 import { convertSecondsToTime } from './utils';
 import { api } from '../../../utils/api';
@@ -10,6 +10,7 @@ const Appointments: React.FC = () => {
   const [visible, setVisible] = useState(false);
   const [patientId, setPatientId] = useState<string>();
   const [appointments, setAppointments] = useState<Array<Appointment>>([]);
+  const [patients, setPatients] = useState<Array<Patient>>([]);
   useEffect(() => {
     api
       .get('/appointment')
@@ -20,6 +21,16 @@ const Appointments: React.FC = () => {
       })
       .catch(() => {
         message.error('Erro ao buscar Atendimentos');
+      });
+    api
+      .get('/patient')
+      .then((response) => {
+        if (response.status === 200) {
+          setPatients(response.data);
+        }
+      })
+      .catch(() => {
+        message.error('Erro ao buscar Pacientes');
       });
   }, []);
 
@@ -57,7 +68,9 @@ const Appointments: React.FC = () => {
       key: 'action',
       render: (_: string, record: Appointment) => (
         <Space size="middle">
-          <Button>Imprimir relatório</Button>
+          <Link to={`/appointments/print/${record.id}`}>
+            <Button>Imprimir relatório</Button>
+          </Link>
         </Space>
       ),
     },
@@ -89,22 +102,13 @@ const Appointments: React.FC = () => {
             <Select.Option value={null} disabled>
               Selecione um paciente
             </Select.Option>
-            {appointments
-              .map((appointment) => appointment.patient.id)
-              .filter(
-                (patientId, index, array) => array.indexOf(patientId) === index
-              )
-              .map((id) => {
-                return (
-                  <Select.Option value={id} key={id}>
-                    {
-                      appointments.find(
-                        (appointment) => appointment.patient.id === id
-                      ).patient.name
-                    }
-                  </Select.Option>
-                );
-              })}
+            {patients.map((patient) => {
+              return (
+                <Select.Option value={patient.id} key={patient.id}>
+                  {patient.name}
+                </Select.Option>
+              );
+            })}
           </Select>
         </Modal>
       </Card>
