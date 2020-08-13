@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useHistory } from 'react-router-dom';
 import {
   Card,
   Input,
@@ -7,19 +7,21 @@ import {
   Button,
   Col,
   Row,
-  TimePicker,
   Table,
   Modal,
   message,
   Space,
+  InputNumber,
 } from 'antd';
 import { Procedure, Appointment } from '@mesha/interfaces';
 import { ModalData } from './utils';
 import Timer from 'react-compound-timer';
 import { convertSecondsToTime } from '../Appointments/utils';
+import { api } from '../../../utils/api';
 const { TextArea } = Input;
 
 const NewAppointments: React.FC = () => {
+  const history = useHistory();
   const { id } = useParams();
   const [modalForm] = Form.useForm();
   const [time, setTime] = useState<number>();
@@ -61,18 +63,15 @@ const NewAppointments: React.FC = () => {
 
   const handleOk = (values) => {
     const modalData = values as ModalData;
-    if (procedures.some((val) => val.name === modalData.name)) {
+    if (procedures.some((procedure) => procedure.name === modalData.name)) {
       return message.error('Esse procedimento já existe');
     }
     const procedureCost = Number(modalData.cost);
-    const procedureTime =
-      modalData.time.hours() * 60 * 60 +
-      modalData.time.minutes() * 60 +
-      modalData.time.seconds();
+    const procedureTime = modalData.time * 3600;
     const newProcedure: Procedure = {
       name: modalData.name,
-      cost: procedureCost,
       time: procedureTime,
+      cost: procedureCost,
     };
     setProcedures([...procedures, newProcedure]);
   };
@@ -85,14 +84,14 @@ const NewAppointments: React.FC = () => {
     procedures: Procedure[];
   }) => {
     const totalCost = procedures
-      .map((val) => val.cost)
-      .map(Number)
-      .reduce((prev, curr) => prev + curr);
+      .map((procedure) => procedure.cost)
+      .reduce((previous, current) => previous + current);
     const totalTime = procedures
-      .map((val) => val.time)
-      .reduce((prev, curr) => prev + curr);
+      .map((procedure) => procedure.time)
+      .reduce((previous, current) => previous + current);
 
     const appointmentData: Appointment = {
+      id: undefined,
       patient: id,
       appointmentTime: time,
       complaints: values.complaints,
@@ -100,7 +99,11 @@ const NewAppointments: React.FC = () => {
       totalCost,
       totalTime,
     };
-    console.log('Success:', appointmentData);
+    api.post('/appointment', appointmentData).then((response) => {
+      if (response.status === 201) {
+        return history.push('/appointments');
+      }
+    });
   };
 
   return (
@@ -111,23 +114,23 @@ const NewAppointments: React.FC = () => {
             title="Novo atendimento"
             extra={
               <div style={{ fontSize: 20 }}>
-                <Timer.Hours formatValue={(value) => `${value}:`} />
-                <Timer.Minutes formatValue={(value) => `${value}:`} />
-                <Timer.Seconds formatValue={(value) => `${value}`} />
+                <Timer.Hours formatValue={(value) => `${value}hr `} />
+                <Timer.Minutes formatValue={(value) => `${value}min `} />
+                <Timer.Seconds formatValue={(value) => `${value}s`} />
               </div>
             }
           >
             <Form layout={'vertical'} onFinish={onFinish}>
               <Row gutter={16}>
-                <Col span={12}>
+                <Col lg={12} xs={24}>
                   <Card title="Queixas do paciente">
                     <Form.Item name="complaints">
-                      <TextArea rows={4} />
+                      <TextArea rows={11} />
                     </Form.Item>
                   </Card>
                 </Col>
-                <Col span={12}>
-                  <Card title="Procedimentos" style={{ minHeight: 230 }}>
+                <Col lg={12} xs={24}>
+                  <Card title="Procedimentos" style={{ minHeight: 383 }}>
                     <Table columns={columns} dataSource={procedures} />
                     <Button
                       style={{ width: '100%', marginTop: 15 }}
@@ -166,7 +169,7 @@ const NewAppointments: React.FC = () => {
                         </Form.Item>
                         <Form.Item
                           name="cost"
-                          label="Custo"
+                          label="Custo (R$)"
                           rules={[
                             {
                               required: true,
@@ -175,20 +178,20 @@ const NewAppointments: React.FC = () => {
                             },
                           ]}
                         >
-                          <Input type="number" prefix="R$" />
+                          <InputNumber style={{ width: '100%' }} />
                         </Form.Item>
                         <Form.Item
                           name="time"
-                          label="Tempo de tratamento"
+                          label="Tempo de tratamento (Em horas)"
                           rules={[
                             {
                               required: true,
                               message:
-                                'Por favor, digite um tempo para o procedimento',
+                                'Por favor, digite a quatidade de horas do tratamento',
                             },
                           ]}
                         >
-                          <TimePicker showNow={false} />
+                          <InputNumber style={{ width: '100%' }} />
                         </Form.Item>
                       </Form>
                     </Modal>

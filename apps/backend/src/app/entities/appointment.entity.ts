@@ -23,7 +23,7 @@ export class Appointment implements IAppointment {
   totalTime: number;
   @Column()
   totalCost: number;
-  @OneToMany('Procedure', 'parentId')
+  @OneToMany('Procedure', 'parent', { cascade: true })
   procedures: IProcedure[];
   @ManyToOne('Patient', 'appointment')
   patient: IPatient;

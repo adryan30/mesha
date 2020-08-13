@@ -15,5 +15,5 @@ export class Procedure implements IProcedure {
   @Column()
   time: number;
   @ManyToOne('Appointment', 'procedures')
-  parentId: IAppointment;
+  parent: IAppointment;
 }

@@ -1,84 +1,27 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Appointment, Patient } from '@mesha/interfaces';
 import { useHistory } from 'react-router-dom';
-import { Space, Card, Table, Button, Modal, Select } from 'antd';
+import { Space, Card, Table, Button, Modal, Select, message } from 'antd';
 import { convertSecondsToTime } from './utils';
+import { api } from '../../../utils/api';
 
 const Appointments: React.FC = () => {
   const history = useHistory();
   const [visible, setVisible] = useState(false);
-  const [patientId, setPatientId] = useState();
-  const [data, setData] = useState<Array<Appointment>>([
-    {
-      id: '1',
-      appointmentTime: 660,
-      complaints: 'Dor de cabeça',
-      procedures: [
-        {
-          id: '1',
-          name: 'Dorflex',
-          cost: 30,
-          time: 10,
-        },
-      ],
-      patient: {
-        id: '1',
-        name: 'John Brown',
-        photo: 'https://randomuser.me/api/portraits/men/40.jpg',
-        birthday: new Date(2002, 3, 17),
-        email: 'adryan.software@gmail.com',
-        phone: '+5582996893340',
-      },
-      totalCost: 30,
-      totalTime: 600,
-    },
-    {
-      id: '2',
-      appointmentTime: 660,
-      complaints: 'Dor de cabeça',
-      procedures: [
-        {
-          id: '1',
-          name: 'Dorflex',
-          cost: 30,
-          time: 10,
-        },
-      ],
-      patient: {
-        id: '2',
-        name: 'Jim Green',
-        photo: 'https://randomuser.me/api/portraits/men/41.jpg',
-        birthday: new Date(2002, 3, 17),
-        email: 'adryan.software@gmail.com',
-        phone: '+5582996893340',
-      },
-      totalCost: 30,
-      totalTime: 601,
-    },
-    {
-      id: '3',
-      appointmentTime: 660,
-      complaints: 'Dor de cabeça',
-      procedures: [
-        {
-          id: '1',
-          name: 'Dorflex',
-          cost: 30,
-          time: 10,
-        },
-      ],
-      patient: {
-        id: '3',
-        name: 'Joe Black',
-        photo: 'https://randomuser.me/api/portraits/men/54.jpg',
-        birthday: new Date(2002, 3, 17),
-        email: 'adryan.software@gmail.com',
-        phone: '+5582996893340',
-      },
-      totalCost: 30,
-      totalTime: 630,
-    },
-  ]);
+  const [patientId, setPatientId] = useState<string>();
+  const [appointments, setAppointments] = useState<Array<Appointment>>([]);
+  useEffect(() => {
+    api
+      .get('/appointment')
+      .then((response) => {
+        if (response.status === 200) {
+          setAppointments(response.data);
+        }
+      })
+      .catch(() => {
+        message.error('Erro ao buscar Atendimentos');
+      });
+  }, []);
 
   const columns = [
     {
@@ -123,9 +66,7 @@ const Appointments: React.FC = () => {
   const switchModal = () => {
     setVisible(!visible);
   };
-  const handleModalChange = (value) => {
-    setPatientId(value);
-  };
+  const handleModalChange = (value: string) => setPatientId(value);
   const handleOk = () => {
     switchModal();
     history.push(`/appointments/new/${patientId}`);
@@ -137,7 +78,7 @@ const Appointments: React.FC = () => {
         title="Seus atendimentos"
         extra={<Button onClick={switchModal}>Começar novo atendimento</Button>}
       >
-        <Table columns={columns} dataSource={data} />
+        <Table columns={columns} dataSource={appointments} />
         <Modal
           title="Selecione um paciente"
           visible={visible}
@@ -148,14 +89,22 @@ const Appointments: React.FC = () => {
             <Select.Option value={null} disabled>
               Selecione um paciente
             </Select.Option>
-            {data.map((appointment) => {
-              // Mudar para pedir lista de pacientes da API
-              return (
-                <Select.Option value={appointment.patient.id}>
-                  {appointment.patient.name}
-                </Select.Option>
-              );
-            })}
+            {appointments
+              .map((appointment) => appointment.patient.id)
+              .filter(
+                (patientId, index, array) => array.indexOf(patientId) === index
+              )
+              .map((id) => {
+                return (
+                  <Select.Option value={id} key={id}>
+                    {
+                      appointments.find(
+                        (appointment) => appointment.patient.id === id
+                      ).patient.name
+                    }
+                  </Select.Option>
+                );
+              })}
           </Select>
         </Modal>
       </Card>

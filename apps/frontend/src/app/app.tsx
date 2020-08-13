@@ -60,7 +60,7 @@ export const App = () => {
             justifyContent: 'center',
           }}
         >
-          <Title style={{ color: 'white', marginTop: 15 }}>Dashboard</Title>
+          <Title style={{ color: 'white', marginTop: 15 }}>PacientePlus</Title>
         </Header>
         <Content style={{ margin: '24px 16px 0' }}>
           <div
