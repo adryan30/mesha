@@ -1,59 +1,57 @@
-import React, { useState } from 'react';
-import { Card, Space, Table } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { Card, Space, Table, message } from 'antd';
 import { Link } from 'react-router-dom';
 import { Patient } from '@mesha/interfaces';
 import Avatar from 'antd/lib/avatar/avatar';
+import { api } from '../../../utils/api';
+import { environment } from '../../../environments/environment';
+import moment from 'moment';
+
+const { apiURL } = environment;
 
 const Patients: React.FC = () => {
-  const [data, setData] = useState<Array<Patient>>([
-    {
-      id: '1',
-      name: 'John Brown',
-      photo: 'https://randomuser.me/api/portraits/men/40.jpg',
-      birthday: new Date(2002, 3, 17),
-      email: 'adryan.software@gmail.com',
-      phone: '+5582996893340',
-    },
-    {
-      id: '2',
-      name: 'Jim Green',
-      photo: 'https://randomuser.me/api/portraits/men/41.jpg',
-      birthday: new Date(2002, 3, 17),
-      email: 'adryan.software@gmail.com',
-      phone: '+5582996893340',
-    },
-    {
-      id: '3',
-      name: 'Joe Black',
-      photo: 'https://randomuser.me/api/portraits/men/54.jpg',
-      birthday: new Date(2002, 3, 17),
-      email: 'adryan.software@gmail.com',
-      phone: '+5582996893340',
-    },
-  ]);
+  const [data, setData] = useState<Array<Patient>>([]);
+  useEffect(() => {
+    api
+      .get('/patient')
+      .then((response) => {
+        if (response.status === 200) {
+          setData(response.data);
+        }
+      })
+      .catch(() => {
+        message.error('Erro ao buscar usuários cadastrados');
+      });
+  }, []);
 
   const columns = [
     {
       title: 'Avatar',
       dataIndex: 'photo',
       key: 'photo',
-      render: (photo: string, record: Patient) => (
-        <Avatar src={photo} alt={`Avatar de ${record.name}`} size={75} />
-      ),
+      render: (photo: string, record: Patient) => {
+        console.log(photo);
+        return (
+          <Avatar
+            src={`${apiURL}/uploads/${photo}`}
+            alt={`Avatar de ${record.name}`}
+            size={75}
+          />
+        );
+      },
     },
     {
       title: 'Name',
       dataIndex: 'name',
       key: 'name',
-      render: (text: string, record: Patient) => (
-        <Link to={`/patients/${record.id}`}>{text}</Link>
-      ),
     },
     {
       title: 'Data de nascimento',
       dataIndex: 'birthday',
       key: 'birthday',
-      render: (birthday: Date) => <p>{birthday.toLocaleDateString()}</p>,
+      render: (birthday: string) => (
+        <div>{moment(birthday).add(3, 'hours').format('DD/MM/YYYY')}</div>
+      ),
     },
     {
       title: 'Email',

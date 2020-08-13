@@ -3,20 +3,33 @@ import { Card, Form, Input, Button, DatePicker, Upload } from 'antd';
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 
 import { getBase64, beforeUpload, layout, tailLayout } from './utils';
+import { api } from '../../../utils/api';
+import { useHistory } from 'react-router-dom';
 
 /**
  * Essa página é composta de elementos de entrada de dados (Input, DatePicker e Upload)
  * Seu objetivo é realizar o cadastro de um novo paciente no sistema.
  */
 const NewPatients: React.FC = () => {
+  const history = useHistory();
   const [imageUrl, setImageUrl] = useState<string>();
   const [loading, setLoading] = useState<boolean>(false);
 
   const onFinish = (values) => {
     console.log('Success:', values);
-  };
-  const onFinishFailed = (values) => {
-    console.log('Failed:', values);
+    api
+      .post('/patient', {
+        name: values.name,
+        email: values.email,
+        phone: values.phone,
+        birthday: values.birthday.format('YYYY-MM-DD'),
+        photo: values.photo.file.response.filename,
+      })
+      .then((response) => {
+        if (response.status === 201) {
+          history.push('/appointments');
+        }
+      });
   };
 
   /**
@@ -48,12 +61,7 @@ const NewPatients: React.FC = () => {
   return (
     <div>
       <Card title="Cadastrar novo paciente">
-        <Form
-          {...layout}
-          name="newPatient"
-          onFinish={onFinish}
-          onFinishFailed={onFinishFailed}
-        >
+        <Form {...layout} name="newPatient" onFinish={onFinish}>
           <Form.Item
             label="Nome"
             name="name"

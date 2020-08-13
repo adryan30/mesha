@@ -16,5 +16,5 @@ export class Patient implements IPatient {
   @Column()
   photo: string;
   @OneToMany('Appointment', 'patient')
-  appointment: Appointment[];
+  appointment?: Appointment[];
 }

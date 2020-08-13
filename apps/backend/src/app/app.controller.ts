@@ -4,6 +4,8 @@ import {
   Post,
   UseInterceptors,
   UploadedFile,
+  Param,
+  Res,
 } from '@nestjs/common';
 
 import { AppService } from './app.service';
@@ -13,9 +15,9 @@ import { FileInterceptor } from '@nestjs/platform-express';
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
-  @Get()
-  getData() {
-    return this.appService.getData();
+  @Get('uploads/:imgPath')
+  test(@Param('imgPath') imgPath, @Res() res) {
+    return res.sendFile(imgPath, { root: __dirname + '/uploads' });
   }
 
   @Post('upload')

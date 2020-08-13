@@ -8,12 +8,19 @@ import {
 
 import Logo from '../assets/logo.png';
 import Routes from './routes';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 const { Title } = Typography;
 const { Header, Content, Sider, Footer } = Layout;
 
 export const App = () => {
+  const { pathname } = useLocation();
+  const routesObj = {
+    '/': '1',
+    '/patients': '2',
+    '/appointments': '3',
+  };
+
   return (
     <Layout style={{ height: '100vh' }}>
       <Sider breakpoint="lg" collapsedWidth="0">
@@ -27,7 +34,11 @@ export const App = () => {
         >
           <img src={Logo} alt="Logo do App" style={{ maxHeight: 70 }} />
         </div>
-        <Menu theme="dark" mode="inline" defaultSelectedKeys={['1']}>
+        <Menu
+          theme="dark"
+          mode="inline"
+          defaultSelectedKeys={[routesObj[pathname]]}
+        >
           <Menu.Item key="1" icon={<HomeOutlined />}>
             <Link to="/">Home</Link>
           </Menu.Item>
