@@ -16,7 +16,8 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@mesha/interfaces": ["libs/interfaces/src/index.ts"]
+      "@mesha/interfaces": ["libs/interfaces/src/index.ts"],
+      "@mesha/shared": ["libs/shared/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
