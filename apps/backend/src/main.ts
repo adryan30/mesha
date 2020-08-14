@@ -11,6 +11,7 @@ async function bootstrap() {
   });
   const globalPrefix = 'api';
   const port = process.env.PORT || 3333;
+
   app.setGlobalPrefix(globalPrefix);
   app.useStaticAssets(join(__dirname, 'uploads'));
 
