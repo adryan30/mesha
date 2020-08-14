@@ -81,6 +81,13 @@ yarn start:full
 
 ```
 
+5. Abre a aplicação no navegador
+```
+A aplicação ficará disponível em localhost:4200
+E API ficará disponível em localhost:3333
+(Caso não estejam disponíveis nestas portas, consulte seu console)
+``` 
+
 <!-- LICENSE -->
 
 ## Licença
