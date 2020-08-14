@@ -23,6 +23,10 @@ const { TextArea } = Input;
 const { Item, useForm } = Form;
 const { Column } = Table;
 
+/**
+ * Página de registro de atendimentos, registra a duração do atendimento
+ * e os dados do paciente (queixas, tratamentos).
+ */
 const NewAppointments: React.FC = () => {
   const history = useHistory();
   const { id } = useParams();

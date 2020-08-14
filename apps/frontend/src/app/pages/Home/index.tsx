@@ -1,6 +1,9 @@
 import React from 'react';
 import { Card } from 'antd';
 
+/**
+ * Página inicial, objetivo de informar o usuário sobre as operações disponíveis
+ */
 const Home: React.FC = () => {
   return (
     <div>

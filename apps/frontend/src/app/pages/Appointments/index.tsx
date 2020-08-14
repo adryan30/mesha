@@ -8,6 +8,10 @@ import { api, formatSecondsToTime } from '@mesha/shared';
 const { Option } = Select;
 const { Column } = Table;
 
+/**
+ * Página de atendimentos registrados, aqui o usuário pode visualizar
+ * seus atendimentos e imprimir-los.
+ */
 const Appointments: React.FC = () => {
   const history = useHistory();
   const [modalVisible, setModalVisible] = useState(false);
@@ -93,7 +97,7 @@ const Appointments: React.FC = () => {
             key="action"
             render={(_: string, record: Appointment) => (
               <Link to={`/appointments/print/${record.id}`}>
-                <Button>Imprimir relatório</Button>
+                <Button>Visualizar relatório</Button>
               </Link>
             )}
           />

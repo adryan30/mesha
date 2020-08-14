@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import moment from 'moment';
-import { Card, Button, Modal, Table } from 'antd';
+import { Card, Table } from 'antd';
 import CSVReader from 'react-csv-reader';
 
 import { CSVLine } from '@mesha/interfaces';
@@ -9,33 +8,13 @@ import './styles.scss';
 
 const { Column } = Table;
 
+/**
+ * Página consumidora de arquivos CSV, após consumidos
+ * os dados são mostrados em uma tabela com paginação.
+ */
 const CSVConsumer: React.FC = () => {
   const [csvData, setCsvData] = useState<CSVLine[]>();
-  const [modalVisible, setModalVisible] = useState(false);
-  const switchModal = () => setModalVisible(!modalVisible);
   const handleCsvUploaded = (data: Array<CSVLine>) => setCsvData(data);
-  const showModal = () =>
-    Modal.info({
-      title: 'Dados do seu CSV',
-      icon: false,
-      content: (
-        <Table dataSource={csvData}>
-          <Column title="Nome" dataIndex="nome" key="nome" />
-          <Column
-            title="Data de Nascimento"
-            dataIndex="nascimento"
-            key="nascimento"
-          />
-          <Column
-            title="Altura"
-            dataIndex="altura"
-            key="altura"
-            render={(altura: string) => <div>{altura}cm</div>}
-          />
-        </Table>
-      ),
-    });
-
   const parserOptions = {
     header: true,
     dynamicTyping: true,

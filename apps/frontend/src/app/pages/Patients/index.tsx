@@ -7,6 +7,11 @@ import { Patient } from '@mesha/interfaces';
 import { api, getPhotoUrl } from '@mesha/shared';
 
 const { Column } = Table;
+
+/**
+ * Página de Pacientes, lista todos os pacientes em uma tabela,
+ * para que o usuário escolha qual o paciente está atendendo.
+ */
 const Patients: React.FC = () => {
   const [data, setData] = useState<Array<Patient>>([]);
   useEffect(() => {

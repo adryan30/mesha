@@ -10,6 +10,9 @@ import {
   CSVConsumer,
 } from './pages';
 
+/**
+ * Coleção de rotas da aplicação, todos os caminhos devem ser concentrados aqui
+ */
 const Routes: React.FC = () => {
   return (
     <>
