@@ -3,7 +3,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { MulterModule } from '@nestjs/platform-express';
 
 import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { environment } from '../environments/environment';
 import { PatientModule } from './patient/patient.module';
 import { AppointmentModule } from './appointment/appointment.module';
@@ -17,6 +16,6 @@ const { db, multer } = environment;
     AppointmentModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [],
 })
 export class AppModule {}

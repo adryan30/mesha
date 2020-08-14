@@ -7,6 +7,7 @@ import {
   Appointments,
   PrintPage,
   NewAppointments,
+  CSVConsumer,
 } from './pages';
 
 const Routes: React.FC = () => {
@@ -18,6 +19,7 @@ const Routes: React.FC = () => {
       <Route path="/appointments" component={Appointments} exact />
       <Route path="/appointments/print/:id" component={PrintPage} />
       <Route path="/appointments/new/:id" component={NewAppointments} />
+      <Route path="/csv" component={CSVConsumer} />
     </>
   );
 };

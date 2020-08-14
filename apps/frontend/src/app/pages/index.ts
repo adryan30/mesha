@@ -4,6 +4,7 @@ import Appointments from './Appointments';
 import NewPatients from './NewPatients';
 import NewAppointments from './NewAppointments';
 import PrintPage from './PrintPage';
+import CSVConsumer from './CSVConsumer';
 
 export {
   Home,
@@ -12,4 +13,5 @@ export {
   NewPatients,
   NewAppointments,
   PrintPage,
+  CSVConsumer,
 };

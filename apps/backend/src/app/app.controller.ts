@@ -8,16 +8,13 @@ import {
   Res,
 } from '@nestjs/common';
 
-import { AppService } from './app.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService) {}
-
-  @Get('uploads/:imgPath')
-  test(@Param('imgPath') imgPath, @Res() res) {
-    return res.sendFile(imgPath, { root: __dirname + '/uploads' });
+  @Get('uploads/:imgName')
+  test(@Param('imgName') imgName: string, @Res() res) {
+    return res.sendFile(imgName, { root: __dirname + '/uploads' });
   }
 
   @Post('upload')

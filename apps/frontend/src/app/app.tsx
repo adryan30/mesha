@@ -4,6 +4,7 @@ import {
   UserOutlined,
   HomeOutlined,
   MedicineBoxOutlined,
+  TableOutlined,
 } from '@ant-design/icons';
 
 import Logo from '../assets/logo.png';
@@ -18,6 +19,8 @@ export const App = () => {
   const { pathname } = useLocation();
   const getRoute = (route: string) => {
     switch (true) {
+      case route.match('/csv')?.length > 0:
+        return '4';
       case route.match('/appointment')?.length > 0:
         return '3';
       case route.match('/patients')?.length > 0:
@@ -53,6 +56,9 @@ export const App = () => {
           </Item>
           <Item key="3" icon={<MedicineBoxOutlined />}>
             <Link to="/appointments">Atendimentos</Link>
+          </Item>
+          <Item key="4" icon={<TableOutlined />}>
+            <Link to="/csv">Consumidor de CSV</Link>
           </Item>
         </Menu>
       </Sider>

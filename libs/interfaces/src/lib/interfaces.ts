@@ -54,3 +54,9 @@ export interface AvatarFile {
     size: number;
   };
 }
+
+export interface CSVLine {
+  nome: string;
+  nascimento: string;
+  altura: number;
+}
