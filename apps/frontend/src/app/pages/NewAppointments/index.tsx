@@ -11,6 +11,7 @@ import {
   Modal,
   message,
   InputNumber,
+  Typography,
 } from 'antd';
 import { Store } from 'antd/lib/form/interface';
 import Timer from 'react-compound-timer';
@@ -20,9 +21,9 @@ import { api, formatSecondsToTime } from '@mesha/shared';
 
 const { Hours, Minutes, Seconds } = Timer;
 const { TextArea } = Input;
+const { Text } = Typography;
 const { Item, useForm } = Form;
-const { Column } = Table;
-
+const { Summary, Column } = Table;
 /**
  * Página de registro de atendimentos, registra a duração do atendimento
  * e os dados do paciente (queixas, tratamentos).
@@ -49,23 +50,16 @@ const NewAppointments: React.FC = () => {
     }
     const procedureCost = Number(newProcedureData.cost);
     const procedureTime = newProcedureData.time * 3600;
-    setProcedures([
-      ...procedures,
-      {
-        name: newProcedureData.name,
-        time: procedureTime,
-        cost: procedureCost,
-      },
-    ]);
+    const newProcedure: Procedure = {
+      name: newProcedureData.name,
+      time: procedureTime,
+      cost: procedureCost,
+    };
+    return setProcedures(procedures.concat(newProcedure));
   };
 
-  const createNewAppointment = ({
-    complaints,
-    procedures,
-  }: {
-    complaints: string;
-    procedures: Procedure[];
-  }) => {
+  const createNewAppointment = (values: Store) => {
+    const { complaints } = values;
     const totalCost = procedures
       .map((procedure) => procedure.cost)
       .reduce((previous, current) => previous + current);
@@ -111,7 +105,32 @@ const NewAppointments: React.FC = () => {
                 </Col>
                 <Col lg={12} xs={24}>
                   <Card title="Procedimentos" style={{ minHeight: 383 }}>
-                    <Table dataSource={procedures}>
+                    <Table
+                      dataSource={procedures}
+                      summary={(data) => {
+                        let totalCost = 0;
+                        let totalTime = 0;
+                        data.forEach(({ cost, time }) => {
+                          totalCost += cost;
+                          totalTime += time;
+                        });
+                        if (totalCost > 0 && totalTime > 0) {
+                          return (
+                            <Summary.Row>
+                              <Summary.Cell index={0}>
+                                <Text type={'danger'}>Total</Text>
+                              </Summary.Cell>
+                              <Summary.Cell index={1}>
+                                R$ {totalCost.toFixed(2).replace('.', ',')}
+                              </Summary.Cell>
+                              <Summary.Cell index={1}>
+                                {formatSecondsToTime(totalTime)}
+                              </Summary.Cell>
+                            </Summary.Row>
+                          );
+                        }
+                      }}
+                    >
                       <Column title="Nome" dataIndex="name" key="name" />
                       <Column
                         title="Custo"
