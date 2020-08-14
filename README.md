@@ -1,90 +1,107 @@
-# Mesha
+# PacientePlus <!-- omit in toc -->
 
-This project was generated using [Nx](https://nx.dev).
+<div align="center">
 
-<p align="center"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png" width="450"></p>
+![PacientePlus Logo](./assets/logo.png)
 
-🔎 **Nx is a set of Extensible Dev Tools for Monorepos.**
+## Sua plataforma de atendimentos <!-- omit in toc -->
 
-## Adding capabilities to your workspace
+</div>
 
-Nx supports many plugins which add capabilities for developing different types of applications and different tools.
+---
 
-These capabilities include generating applications, libraries, etc as well as the devtools to test, and build projects as well.
+## Tabela de Conteúdos <!-- omit in toc -->
 
-Below are our core plugins:
+- [Tecnologias](#tecnologias)
+- [Rodando o projeto](#rodando-o-projeto)
+  - [Pré-requisitos](#pré-requisitos)
+  - [Instalação](#instalação)
+- [Licença](#licença)
+- [Contato](#contato)
 
-- [React](https://reactjs.org)
-  - `npm install --save-dev @nrwl/react`
-- Web (no framework frontends)
-  - `npm install --save-dev @nrwl/web`
-- [Angular](https://angular.io)
-  - `npm install --save-dev @nrwl/angular`
-- [Nest](https://nestjs.com)
-  - `npm install --save-dev @nrwl/nest`
-- [Express](https://expressjs.com)
-  - `npm install --save-dev @nrwl/express`
-- [Node](https://nodejs.org)
-  - `npm install --save-dev @nrwl/node`
+<!-- ABOUT THE PROJECT -->
 
-There are also many [community plugins](https://nx.dev/nx-community) you could add.
+## Tecnologias
 
-## Generate an application
+Tecnologias que me ajudaram a trazer esse projeto à realidade:
 
-Run `nx g @nrwl/react:app my-app` to generate an application.
+- [NestJS](https://nestjs.com/)
+- [React](https://pt-br.reactjs.org/)
+- [Ant Design](https://ant.design/)
+- [TypeScript](https://www.typescriptlang.org/)
+- [NX Monorepo](https://nx.dev/react)
 
-> You can use any of the plugins above to generate applications as well.
+<!-- GETTING STARTED -->
 
-When using Nx, you can create multiple applications and libraries in the same workspace.
+## Rodando o projeto
 
-## Generate a library
+### Pré-requisitos
 
-Run `nx g @nrwl/react:lib my-lib` to generate a library.
+É necessario ter instalado:
 
-> You can also use any of the plugins above to generate libraries as well.
+- [Node.js](https://nodejs.org/)
+- NPM ([Yarn v1](https://classic.yarnpkg.com/lang/en/) recomendado)
+- [Git](https://git-scm.com/)
 
-Libraries are sharable across libraries and applications. They can be imported from `@mesha/mylib`.
+### Instalação
 
-## Development server
+1. Clone o repositório
 
-Run `nx serve my-app` for a dev server. Navigate to http://localhost:4200/. The app will automatically reload if you change any of the source files.
+```sh
+git clone https://github.com/adryan30/mesha.git
+```
 
-## Code scaffolding
+2. Mude para a branch develop
 
-Run `nx g @nrwl/react:component my-component --project=my-app` to generate a new component.
+```sh
+git checkout develop
+```
 
-## Build
+3. Instale os pacotes NPM
 
-Run `nx build my-app` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+```sh
+# Via NPM
+npm install
 
-## Running unit tests
+# Via yarn (recomendado)
+yarn install
+```
 
-Run `nx test my-app` to execute the unit tests via [Jest](https://jestjs.io).
+4. Execute o comando parar abrir o **_app_** desejado.
 
-Run `nx affected:test` to execute the unit tests affected by a change.
+```sh
+# Para executar o frontend
+yarn start frontend
 
-## Running end-to-end tests
+# Para executar o backend
+yarn start backend
 
-Run `ng e2e my-app` to execute the end-to-end tests via [Cypress](https://www.cypress.io).
+# Para executar a aplicação completa
+yarn start:full
 
-Run `nx affected:e2e` to execute the end-to-end tests affected by a change.
+```
 
-## Understand your workspace
+<!-- LICENSE -->
 
-Run `nx dep-graph` to see a diagram of the dependencies of your projects.
+## Licença
 
-## Further help
+Distribuido sobre a licença `MIT`. Veja `LICENSE.md` para mais informações.
 
-Visit the [Nx Documentation](https://nx.dev) to learn more.
+<!-- CONTACT -->
 
-## ☁ Nx Cloud
+## Contato
 
-### Computation Memoization in the Cloud
+**Adryan Almeida**
 
-<p align="center"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-cloud-card.png"></p>
+[![Gmail][gmail-shield]][gmail-url]
+[![LinkedIn][linkedin-shield]][linkedin-url]
 
-Nx Cloud pairs with Nx in order to enable you to build and test code more rapidly, by up to 10 times. Even teams that are new to Nx can connect to Nx Cloud and start saving time instantly.
+Link do projeto: [https://github.com/adryan30/mesha](https://github.com/adryan30/mesha)
 
-Teams using Nx gain the advantage of building full-stack applications with their preferred framework alongside Nx’s advanced code generation and project dependency graph, plus a unified experience for both frontend and backend developers.
+<!-- MARKDOWN LINKS & IMAGES -->
 
-Visit [Nx Cloud](https://nx.app/) to learn more.
+[gmail-shield]: https://img.shields.io/badge/email-red?logo=gmail&style=for-the-badge&colorB=555
+[gmail-url]: mailto:adryan.software@gmail.com
+[linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
+[linkedin-url]: https://linkedin.com/in/adryanalmeida
+[product-screenshot]: ./assets/landing.png
