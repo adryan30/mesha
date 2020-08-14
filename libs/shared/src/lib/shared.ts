@@ -6,8 +6,15 @@ export const apiURL = 'http://localhost:3333/api';
 
 export const api = axios.create({ baseURL: apiURL });
 
+/**
+ * Esse metódo retorna uma string que representa a localização de uma foto do servidor
+ * @param photoId ID da foto que foi armazenada no servidor
+ */
 export const getPhotoUrl = (photoId: string) => `${apiURL}/uploads/${photoId}`;
 
+/**
+ * Espaçamento para Formulários e Botões de formulário
+ */
 export const formLayout = {
   labelCol: { span: 8 },
   wrapperCol: { span: 8 },
@@ -38,6 +45,10 @@ export const imageToBase64 = (img, callback) => {
   reader.readAsDataURL(img);
 };
 
+/**
+ * Esse método retorna uma string que representa a duração (desde dias até segundos)
+ * @param num Número de segundos em uma duração
+ */
 export function formatSecondsToTime(num: number) {
   const duration = moment.duration(num, 'seconds');
   const days = duration.days() !== 0 && `${duration.days()} dias`;

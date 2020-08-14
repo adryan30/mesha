@@ -15,6 +15,9 @@ const { Title } = Typography;
 const { Header, Content, Sider, Footer } = Layout;
 const { Item } = Menu;
 
+/**
+ * Componente base da aplicação, utilizado com "Layout" principal
+ */
 export const App = () => {
   const { pathname } = useLocation();
   const getRoute = (route: string) => {

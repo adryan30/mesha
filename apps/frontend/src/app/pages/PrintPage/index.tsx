@@ -19,6 +19,9 @@ const { Text } = Typography;
 const { Summary, Column } = Table;
 const { Cell, Row } = Summary;
 
+/**
+ * Página para a visualização de relatórios, também permite a impressão
+ */
 const PrintPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const printAreaRef = useRef();
