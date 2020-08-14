@@ -1,3 +1,5 @@
+import { Moment } from 'moment';
+
 export interface Patient {
   id: string;
   name: string;
@@ -27,4 +29,28 @@ export interface Procedure {
   name: string;
   cost: number;
   time: number;
+}
+
+export interface PatientFormData {
+  id: string;
+  name: string;
+  birthday: Moment;
+  email: string;
+  phone: string;
+  photo: {
+    file: { response: { filename: string } };
+  };
+}
+
+export interface AvatarFile {
+  response: {
+    fieldname: string;
+    originalname: string;
+    encoding: string;
+    mimetype: string;
+    destination: string;
+    filename: string;
+    path: string;
+    size: number;
+  };
 }

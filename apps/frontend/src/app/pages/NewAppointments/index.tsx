@@ -10,76 +10,55 @@ import {
   Table,
   Modal,
   message,
-  Space,
   InputNumber,
 } from 'antd';
-import { Procedure, Appointment } from '@mesha/interfaces';
-import { ModalData } from './utils';
+import { Store } from 'antd/lib/form/interface';
 import Timer from 'react-compound-timer';
-import { convertSecondsToTime } from '../Appointments/utils';
-import { api } from '../../../utils/api';
+
+import { Procedure } from '@mesha/interfaces';
+import { api, formatSecondsToTime } from '@mesha/shared';
+
+const { Hours, Minutes, Seconds } = Timer;
 const { TextArea } = Input;
+const { Item, useForm } = Form;
+const { Column } = Table;
 
 const NewAppointments: React.FC = () => {
   const history = useHistory();
   const { id } = useParams();
-  const [modalForm] = Form.useForm();
+  const [modalForm] = useForm();
   const [time, setTime] = useState<number>();
-  const [visible, setVisible] = useState(false);
   const [procedures, setProcedures] = useState<Procedure[]>([]);
-  const switchModal = () => setVisible(!visible);
-
-  const columns = [
-    {
-      title: 'Nome',
-      dataIndex: 'name',
-      key: 'name',
-      render: (name: string) => <p>{name}</p>,
-    },
-    {
-      title: 'Custo',
-      dataIndex: 'cost',
-      key: 'cost',
-      render: (cost: number) => <p>R$ {cost.toFixed(2).replace('.', ',')}</p>,
-    },
-    {
-      title: 'Duração de tratamento',
-      dataIndex: 'time',
-      key: 'time',
-      render: (time: number) => <p>{convertSecondsToTime(time)}</p>,
-    },
-    {
-      title: 'Ações',
-      key: 'action',
-      render: (_: string, record: Procedure) => (
-        <Space size="middle">
-          <Button onClick={() => handleRemove(record.name)}>
-            Remover procedimento
-          </Button>
-        </Space>
-      ),
-    },
-  ];
-
-  const handleOk = (values) => {
-    const modalData = values as ModalData;
-    if (procedures.some((procedure) => procedure.name === modalData.name)) {
+  const [modalVisible, setModalVisible] = useState(false);
+  const switchModal = () => setModalVisible(!modalVisible);
+  const removeProcedure = (name: string) => {
+    return setProcedures(
+      procedures.filter((procedure) => procedure.name !== name)
+    );
+  };
+  const addNewProcedure = (values: Store) => {
+    const newProcedureData = values as Procedure;
+    if (
+      procedures.some((procedure) => procedure.name === newProcedureData.name)
+    ) {
       return message.error('Esse procedimento já existe');
     }
-    const procedureCost = Number(modalData.cost);
-    const procedureTime = modalData.time * 3600;
-    const newProcedure: Procedure = {
-      name: modalData.name,
-      time: procedureTime,
-      cost: procedureCost,
-    };
-    setProcedures([...procedures, newProcedure]);
+    const procedureCost = Number(newProcedureData.cost);
+    const procedureTime = newProcedureData.time * 3600;
+    setProcedures([
+      ...procedures,
+      {
+        name: newProcedureData.name,
+        time: procedureTime,
+        cost: procedureCost,
+      },
+    ]);
   };
 
-  const handleRemove = (name) =>
-    setProcedures(procedures.filter((procedure) => procedure.name !== name));
-
-  const onFinish = (values: {
+  const createNewAppointment = ({
+    complaints,
+    procedures,
+  }: {
     complaints: string;
     procedures: Procedure[];
   }) => {
@@ -89,21 +68,18 @@ const NewAppointments: React.FC = () => {
     const totalTime = procedures
       .map((procedure) => procedure.time)
       .reduce((previous, current) => previous + current);
-
-    const appointmentData: Appointment = {
-      id: undefined,
-      patient: id,
-      appointmentTime: time,
-      complaints: values.complaints,
-      procedures: procedures,
-      totalCost,
-      totalTime,
-    };
-    api.post('/appointment', appointmentData).then((response) => {
-      if (response.status === 201) {
-        return history.push('/appointments');
-      }
-    });
+    api
+      .post('/appointment', {
+        patient: id,
+        appointmentTime: time,
+        complaints,
+        procedures,
+        totalCost,
+        totalTime,
+      })
+      .then((response) => {
+        if (response.status === 201) history.push('/appointments');
+      });
   };
 
   return (
@@ -114,24 +90,51 @@ const NewAppointments: React.FC = () => {
             title="Novo atendimento"
             extra={
               <div style={{ fontSize: 20 }}>
-                <Timer.Hours formatValue={(value) => `${value}hr `} />
-                <Timer.Minutes formatValue={(value) => `${value}min `} />
-                <Timer.Seconds formatValue={(value) => `${value}s`} />
+                <Hours formatValue={(value) => `${value}hr `} />
+                <Minutes formatValue={(value) => `${value}min `} />
+                <Seconds formatValue={(value) => `${value}s`} />
               </div>
             }
           >
-            <Form layout={'vertical'} onFinish={onFinish}>
+            <Form layout={'vertical'} onFinish={createNewAppointment}>
               <Row gutter={16}>
                 <Col lg={12} xs={24}>
                   <Card title="Queixas do paciente">
-                    <Form.Item name="complaints">
+                    <Item name="complaints">
                       <TextArea rows={11} />
-                    </Form.Item>
+                    </Item>
                   </Card>
                 </Col>
                 <Col lg={12} xs={24}>
                   <Card title="Procedimentos" style={{ minHeight: 383 }}>
-                    <Table columns={columns} dataSource={procedures} />
+                    <Table dataSource={procedures}>
+                      <Column title="Nome" dataIndex="name" key="name" />
+                      <Column
+                        title="Custo"
+                        dataIndex="cost"
+                        key="cost"
+                        render={(cost: number) => (
+                          <div>R$ {cost.toFixed(2).replace('.', ',')}</div>
+                        )}
+                      />
+                      <Column
+                        title="Duração de tratamento"
+                        dataIndex="time"
+                        key="time"
+                        render={(time: number) => (
+                          <div>{formatSecondsToTime(time)}</div>
+                        )}
+                      />
+                      <Column
+                        title="Ações"
+                        key="action"
+                        render={(_: string, record: Procedure) => (
+                          <Button onClick={() => removeProcedure(record.name)}>
+                            Remover procedimento
+                          </Button>
+                        )}
+                      />
+                    </Table>
                     <Button
                       style={{ width: '100%', marginTop: 15 }}
                       type="primary"
@@ -141,11 +144,11 @@ const NewAppointments: React.FC = () => {
                     </Button>
                     <Modal
                       title="Criar novo procedimento"
-                      visible={visible}
+                      visible={modalVisible}
                       onCancel={switchModal}
                       onOk={() => {
                         modalForm.validateFields().then((values) => {
-                          handleOk(values);
+                          addNewProcedure(values);
                           modalForm.resetFields();
                           switchModal();
                         });
@@ -153,8 +156,8 @@ const NewAppointments: React.FC = () => {
                       okText="Adicionar procedimento"
                       cancelText="Cancelar"
                     >
-                      <Form form={modalForm} onFinish={handleOk}>
-                        <Form.Item
+                      <Form form={modalForm} onFinish={addNewProcedure}>
+                        <Item
                           name="name"
                           label="Nome"
                           rules={[
@@ -166,8 +169,8 @@ const NewAppointments: React.FC = () => {
                           ]}
                         >
                           <Input />
-                        </Form.Item>
-                        <Form.Item
+                        </Item>
+                        <Item
                           name="cost"
                           label="Custo (R$)"
                           rules={[
@@ -179,8 +182,8 @@ const NewAppointments: React.FC = () => {
                           ]}
                         >
                           <InputNumber style={{ width: '100%' }} />
-                        </Form.Item>
-                        <Form.Item
+                        </Item>
+                        <Item
                           name="time"
                           label="Tempo de tratamento (Em horas)"
                           rules={[
@@ -192,13 +195,13 @@ const NewAppointments: React.FC = () => {
                           ]}
                         >
                           <InputNumber style={{ width: '100%' }} />
-                        </Form.Item>
+                        </Item>
                       </Form>
                     </Modal>
                   </Card>
                 </Col>
               </Row>
-              <Form.Item style={{ marginTop: 20 }}>
+              <Item style={{ marginTop: 20 }}>
                 <Button
                   type="primary"
                   htmlType="submit"
@@ -206,7 +209,7 @@ const NewAppointments: React.FC = () => {
                 >
                   Finalizar atendimento
                 </Button>
-              </Form.Item>
+              </Item>
             </Form>
           </Card>
         )}

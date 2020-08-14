@@ -1,17 +1,26 @@
 import React, { useState, useEffect } from 'react';
-import { Appointment, Patient } from '@mesha/interfaces';
 import { useHistory, Link } from 'react-router-dom';
-import { Space, Card, Table, Button, Modal, Select, message } from 'antd';
-import { convertSecondsToTime } from './utils';
-import { api } from '../../../utils/api';
+import { Card, Table, Button, Modal, Select, message as toaster } from 'antd';
+
+import { Appointment, Patient } from '@mesha/interfaces';
+import { api, formatSecondsToTime } from '@mesha/shared';
+
+const { Option } = Select;
+const { Column } = Table;
 
 const Appointments: React.FC = () => {
   const history = useHistory();
-  const [visible, setVisible] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
   const [patientId, setPatientId] = useState<string>();
   const [appointments, setAppointments] = useState<Array<Appointment>>([]);
   const [patients, setPatients] = useState<Array<Patient>>([]);
-  useEffect(() => {
+  const switchModal = () => setModalVisible(!modalVisible);
+  const handleModalChange = (value: string) => setPatientId(value);
+  const handleModalClose = () => {
+    switchModal();
+    history.push(`/appointments/new/${patientId}`);
+  };
+  const getAppointments = () => {
     api
       .get('/appointment')
       .then((response) => {
@@ -20,8 +29,10 @@ const Appointments: React.FC = () => {
         }
       })
       .catch(() => {
-        message.error('Erro ao buscar Atendimentos');
+        toaster.error('Erro ao buscar Atendimentos');
       });
+  };
+  const getPatients = () => {
     api
       .get('/patient')
       .then((response) => {
@@ -30,60 +41,14 @@ const Appointments: React.FC = () => {
         }
       })
       .catch(() => {
-        message.error('Erro ao buscar Pacientes');
+        toaster.error('Erro ao buscar Pacientes');
       });
+  };
+
+  useEffect(() => {
+    getAppointments();
+    getPatients();
   }, []);
-
-  const columns = [
-    {
-      title: 'Atendimento para',
-      dataIndex: 'patient',
-      key: 'patient',
-      render: (patient: Patient) => <p>{patient.name}</p>,
-    },
-    {
-      title: 'Valor Total',
-      dataIndex: 'totalCost',
-      key: 'totalCost',
-      render: (totalCost: number) => (
-        <p>R$ {totalCost.toFixed(2).replace('.', ',')}</p>
-      ),
-    },
-    {
-      title: 'Duração de tratamento',
-      dataIndex: 'totalTime',
-      key: 'totalTime',
-      render: (totalTime: number) => <p>{convertSecondsToTime(totalTime)}</p>,
-    },
-    {
-      title: 'Duração do atendimento',
-      dataIndex: 'appointmentTime',
-      key: 'appointmentTime',
-      render: (appointmentTime: number) => (
-        <p>{convertSecondsToTime(appointmentTime)}</p>
-      ),
-    },
-    {
-      title: 'Ações',
-      key: 'action',
-      render: (_: string, record: Appointment) => (
-        <Space size="middle">
-          <Link to={`/appointments/print/${record.id}`}>
-            <Button>Imprimir relatório</Button>
-          </Link>
-        </Space>
-      ),
-    },
-  ];
-
-  const switchModal = () => {
-    setVisible(!visible);
-  };
-  const handleModalChange = (value: string) => setPatientId(value);
-  const handleOk = () => {
-    switchModal();
-    history.push(`/appointments/new/${patientId}`);
-  };
 
   return (
     <div>
@@ -91,24 +56,63 @@ const Appointments: React.FC = () => {
         title="Seus atendimentos"
         extra={<Button onClick={switchModal}>Começar novo atendimento</Button>}
       >
-        <Table columns={columns} dataSource={appointments} />
+        <Table dataSource={appointments}>
+          <Column
+            title="Atendimento para"
+            dataIndex="patient"
+            key="patient"
+            render={({ name }: Patient) => <div>{name}</div>}
+          />
+          <Column
+            title="Valor Total"
+            dataIndex="totalCost"
+            key="totalCost"
+            render={(totalCost: number) => (
+              <div>R$ {totalCost.toFixed(2).replace('.', ',')}</div>
+            )}
+          />
+          <Column
+            title="Duração de tratamento"
+            dataIndex="totalTime"
+            key="totalTime"
+            render={(totalTime: number) => (
+              <div>{formatSecondsToTime(totalTime)}</div>
+            )}
+          />
+          ]
+          <Column
+            title="Duração do atendimento"
+            dataIndex="appointmentTime"
+            key="appointmentTime"
+            render={(appointmentTime: number) => (
+              <div>{formatSecondsToTime(appointmentTime)}</div>
+            )}
+          />
+          <Column
+            title="Ações"
+            key="action"
+            render={(_: string, record: Appointment) => (
+              <Link to={`/appointments/print/${record.id}`}>
+                <Button>Imprimir relatório</Button>
+              </Link>
+            )}
+          />
+        </Table>
         <Modal
           title="Selecione um paciente"
-          visible={visible}
-          onOk={handleOk}
+          visible={modalVisible}
+          onOk={handleModalClose}
           onCancel={switchModal}
         >
           <Select defaultValue={null} onChange={handleModalChange}>
-            <Select.Option value={null} disabled>
+            <Option value={null} disabled>
               Selecione um paciente
-            </Select.Option>
-            {patients.map((patient) => {
-              return (
-                <Select.Option value={patient.id} key={patient.id}>
-                  {patient.name}
-                </Select.Option>
-              );
-            })}
+            </Option>
+            {patients.map((patient) => (
+              <Option value={patient.id} key={patient.id}>
+                {patient.name}
+              </Option>
+            ))}
           </Select>
         </Modal>
       </Card>

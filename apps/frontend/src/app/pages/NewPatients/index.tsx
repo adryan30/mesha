@@ -1,10 +1,29 @@
 import React, { useState } from 'react';
-import { Card, Form, Input, Button, DatePicker, Upload } from 'antd';
+import {
+  Card,
+  Form,
+  Input,
+  Button,
+  DatePicker,
+  Upload,
+  message as toaster,
+} from 'antd';
+import { useHistory } from 'react-router-dom';
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 
-import { getBase64, beforeUpload, layout, tailLayout } from './utils';
-import { api } from '../../../utils/api';
-import { useHistory } from 'react-router-dom';
+import {
+  api,
+  checkIfFileIsImage,
+  imageToBase64,
+  apiURL,
+  formLayout,
+  formActionsLayout,
+} from '@mesha/shared';
+import { PatientFormData, AvatarFile } from '@mesha/interfaces';
+import { UploadChangeParam } from 'antd/lib/upload';
+import { UploadFile } from 'antd/lib/upload/interface';
+
+const { Item } = Form;
 
 /**
  * Essa página é composta de elementos de entrada de dados (Input, DatePicker e Upload)
@@ -15,8 +34,7 @@ const NewPatients: React.FC = () => {
   const [imageUrl, setImageUrl] = useState<string>();
   const [loading, setLoading] = useState<boolean>(false);
 
-  const onFinish = (values) => {
-    console.log('Success:', values);
+  const onSubmit = (values: PatientFormData) => {
     api
       .post('/patient', {
         name: values.name,
@@ -29,19 +47,24 @@ const NewPatients: React.FC = () => {
         if (response.status === 201) {
           history.push('/appointments');
         }
+      })
+      .catch(() => {
+        toaster.error(
+          'Ocorreu um erro ao cadastrar o usuário, tente novamente'
+        );
       });
   };
 
   /**
    * Esse método gerencia o estado local com o objetivo de apresentar uma "thumbnail" da imagem enviada
-   * @param info Informações sobre o estado atual da imagem enviada
+   * @param avatarFile Informações sobre o estado atual da imagem enviada
    */
-  const handleAvatarChange = (info) => {
-    if (info.file.status === 'uploading') {
-      return setLoading(true);
-    }
-    if (info.file.status === 'done') {
-      getBase64(info.file.originFileObj, (imageUrl: string) => {
+  const handleAvatarChange = (
+    avatarFile: UploadChangeParam<UploadFile<AvatarFile>>
+  ) => {
+    if (avatarFile.file.status === 'uploading') return setLoading(true);
+    if (avatarFile.file.status === 'done') {
+      imageToBase64(avatarFile.file.originFileObj, (imageUrl: string) => {
         setImageUrl(imageUrl);
         setLoading(false);
       });
@@ -61,8 +84,8 @@ const NewPatients: React.FC = () => {
   return (
     <div>
       <Card title="Cadastrar novo paciente">
-        <Form {...layout} name="newPatient" onFinish={onFinish}>
-          <Form.Item
+        <Form {...formLayout} name="newPatient" onFinish={onSubmit}>
+          <Item
             label="Nome"
             name="name"
             rules={[
@@ -73,8 +96,8 @@ const NewPatients: React.FC = () => {
             ]}
           >
             <Input />
-          </Form.Item>
-          <Form.Item
+          </Item>
+          <Item
             label="Data de nascimento"
             name="birthday"
             rules={[
@@ -85,8 +108,8 @@ const NewPatients: React.FC = () => {
             ]}
           >
             <DatePicker />
-          </Form.Item>
-          <Form.Item
+          </Item>
+          <Item
             label="Email"
             name="email"
             rules={[
@@ -97,8 +120,8 @@ const NewPatients: React.FC = () => {
             ]}
           >
             <Input />
-          </Form.Item>
-          <Form.Item
+          </Item>
+          <Item
             label="Telefone"
             name="phone"
             rules={[
@@ -109,9 +132,9 @@ const NewPatients: React.FC = () => {
             ]}
           >
             <Input />
-          </Form.Item>
-          <Form.Item
-            {...layout}
+          </Item>
+          <Item
+            {...formLayout}
             label="Avatar"
             name="photo"
             rules={[
@@ -126,8 +149,8 @@ const NewPatients: React.FC = () => {
               listType="picture-card"
               className="avatar-uploader"
               showUploadList={false}
-              action="http://localhost:3333/api/upload"
-              beforeUpload={beforeUpload}
+              action={`${apiURL}/upload`}
+              beforeUpload={checkIfFileIsImage}
               onChange={handleAvatarChange}
             >
               {imageUrl ? (
@@ -136,12 +159,12 @@ const NewPatients: React.FC = () => {
                 uploadButton
               )}
             </Upload>
-          </Form.Item>
-          <Form.Item {...tailLayout}>
+          </Item>
+          <Item {...formActionsLayout}>
             <Button type="primary" htmlType="submit">
               Criar paciente
             </Button>
-          </Form.Item>
+          </Item>
         </Form>
       </Card>
     </div>

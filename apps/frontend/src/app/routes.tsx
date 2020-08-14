@@ -1,12 +1,13 @@
 import React from 'react';
 import { Route } from 'react-router-dom';
-
-import Home from './pages/Home';
-import Patients from './pages/Patients';
-import Appointments from './pages/Appointments';
-import NewPatients from './pages/NewPatients';
-import NewAppointments from './pages/NewAppointments';
-import PrintPage from './pages/PrintPage';
+import {
+  Home,
+  Patients,
+  NewPatients,
+  Appointments,
+  PrintPage,
+  NewAppointments,
+} from './pages';
 
 const Routes: React.FC = () => {
   return (

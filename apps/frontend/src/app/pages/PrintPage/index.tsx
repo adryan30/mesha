@@ -1,37 +1,50 @@
 import React, { useState, useEffect, useRef } from 'react';
+import {
+  Card,
+  Spin,
+  Table,
+  Button,
+  Avatar,
+  Typography,
+  message as toaster,
+} from 'antd';
 import { useParams } from 'react-router-dom';
-import { Card, Spin, Table, Button, Row, Col, Avatar, Typography } from 'antd';
-import { Appointment } from '@mesha/interfaces';
-import { api } from '../../../utils/api';
-import Column from 'antd/lib/table/Column';
-import { convertSecondsToTime } from '../Appointments/utils';
 import ReactToPrint from 'react-to-print';
-import { environment } from '../../../environments/environment';
 import moment from 'moment';
+
+import { api, apiURL, formatSecondsToTime } from '@mesha/shared';
+import { Appointment } from '@mesha/interfaces';
+
 const { Text } = Typography;
-const { apiURL } = environment;
+const { Summary, Column } = Table;
+const { Cell, Row } = Summary;
 
 const PrintPage: React.FC = () => {
-  const { id } = useParams();
-  const componentRef = useRef();
+  const { id } = useParams<{ id: string }>();
+  const printAreaRef = useRef();
   const [appointment, setAppointment] = useState<Appointment>();
+  const getAppointment = (id: string) => {
+    api
+      .get(`/appointment/${id}`)
+      .then((response) => {
+        if (response.status === 200) return setAppointment(response.data);
+      })
+      .catch(() => {
+        toaster.error('Erro ao tentar recuperar atendimento');
+      });
+  };
   useEffect(() => {
-    api.get(`/appointment/${id}`).then((response) => {
-      if (response.status === 200) {
-        setAppointment(response.data);
-      }
-      console.log(response);
-    });
+    getAppointment(id);
   }, [id]);
 
   if (appointment) {
     const { patient } = appointment;
     return (
       <>
-        <div ref={componentRef}>
+        <div ref={printAreaRef}>
           <Card
             title={`Relatório #${id}`}
-            extra={`Tempo de consulta: ${convertSecondsToTime(
+            extra={`Tempo de consulta: ${formatSecondsToTime(
               appointment.appointmentTime
             )}`}
           >
@@ -57,17 +70,17 @@ const PrintPage: React.FC = () => {
                 dataSource={appointment.procedures}
                 pagination={false}
                 summary={() => (
-                  <Table.Summary.Row>
-                    <Table.Summary.Cell index={0}>
+                  <Row>
+                    <Cell index={0}>
                       <Text type={'danger'}>Total</Text>
-                    </Table.Summary.Cell>
-                    <Table.Summary.Cell index={1}>
+                    </Cell>
+                    <Cell index={1}>
                       R$ {appointment.totalCost.toFixed(2).replace('.', ',')}
-                    </Table.Summary.Cell>
-                    <Table.Summary.Cell index={1}>
-                      {convertSecondsToTime(appointment.totalTime)}
-                    </Table.Summary.Cell>
-                  </Table.Summary.Row>
+                    </Cell>
+                    <Cell index={1}>
+                      {formatSecondsToTime(appointment.totalTime)}
+                    </Cell>
+                  </Row>
                 )}
               >
                 <Column title="Nome" dataIndex="name" key="name" />
@@ -83,7 +96,7 @@ const PrintPage: React.FC = () => {
                   title="Tempo de tratamento"
                   dataIndex="time"
                   key="time"
-                  render={(time: number) => <p>{convertSecondsToTime(time)}</p>}
+                  render={(time: number) => <p>{formatSecondsToTime(time)}</p>}
                 />
               </Table>
             </Card>
@@ -95,7 +108,7 @@ const PrintPage: React.FC = () => {
               Imprimir
             </Button>
           )}
-          content={() => componentRef.current}
+          content={() => printAreaRef.current}
         />
       </>
     );
